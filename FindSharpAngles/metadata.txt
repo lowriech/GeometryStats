@@ -1,0 +1,39 @@
+# This file contains metadata for your plugin. Since 
+# version 2.0 of QGIS this is the proper way to supply 
+# information about a plugin. The old method of 
+# embedding metadata in __init__.py will 
+# is no longer supported since version 2.0.
+
+# This file should be included when you package your plugin.# Mandatory items:
+
+[general]
+name=Find Sharp Angles
+qgisMinimumVersion=2.0
+description=This plugin creates a shapefile of sharp angles from a given layer
+version=0.1
+author=Chris Lowrie
+email=lowriech@msu.edu
+
+about=This plugin takes selected vector features and outputs a point shapefile of all of the sharp angles of those. Useful for QA purposes on large shapes.  The user can set the maximum angle and the output path of the point shapefile.  The selected features do not all have to be in the same layer.
+
+tracker=xxx
+repository=xxx
+# End of mandatory metadata
+
+# Recommended items:
+
+# Uncomment the following line and add your changelog:
+# changelog=
+
+# Tags are comma separated with spaces allowed
+tags=xxx
+
+homepage=xxx
+category=Vector
+icon=icon.png
+# experimental flag
+experimental=True
+
+# deprecated flag (applies to the whole plugin, not just a single version)
+deprecated=False
+
