@@ -9,5 +9,6 @@ This repository also includes the initial code to run descriptive statistics on 
 Inputs should be converted first to a line layer if they are polygon, and reprojected to a meter CRS (although this is not entirely necessary for small areas).
 
 DEPENDENCIES:
+
 -- pandas
--- tabulate
+
