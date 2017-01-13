@@ -33,7 +33,6 @@ import os.path
 from qgis.core import *
 import pandas as pd
 import math
-import tabulate
 import matplotlib.pyplot as plt
 import matplotlib
 
@@ -54,11 +53,11 @@ class FindSharpAngles:
         self.fileName = ''
         self.Angles = pd.DataFrame([pd.Series([0,0])], columns = ['Point', 'Angle'])
         self.Edges = pd.DataFrame([pd.Series([0,0])], columns = ['Edge', 'Length'])
-        self.fields = QgsFields()
-        self.fields.append(QgsField("Angle", QVariant.Double))
         self.sharp_angle_list = []
         self.user_angle = 100.0
         self.count_0 = 0
+        self.count_10 = 0
+        self.count_45 = 0
         self.count_90 = 0
         self.count_180 = 0
 
@@ -204,6 +203,10 @@ class FindSharpAngles:
 ##Supplementary Functions
     def get_path(self):
         fileName = QFileDialog.getSaveFileName()
+        if fileName[-4:] == '.shp':
+            pass
+        else:
+            fileName = fileName + '.shp'
         self.dlg.path_lbl.setText(fileName)
         self.fileName = fileName
     
@@ -218,7 +221,7 @@ class FindSharpAngles:
 
     def show_dialog(self, text, severity):
         mw = self.iface.mainWindow()
-        QMessageBox.warning(mw, "Sharp Angles", text)
+        QMessageBox.warning(mw, "Message", text)
 
     def calculate_angle(self, p0, p1, p2):
         #Need to manage the unites / projection here
@@ -236,8 +239,8 @@ class FindSharpAngles:
         #Need to manage the units / projection here
         return math.sqrt(math.pow(p0.x-p1.x, 2) + math.pow(p0.y-p1.y, 2))
 
-    def load_shape(self, path):
-        layer = self.iface.addVectorLayer(path, "Sharp Angles", "ogr")
+    def load_shape(self, path, layer_name):
+        layer = self.iface.addVectorLayer(path, layer_name, "ogr")
         self.iface.mapCanvas().refresh()
         return layer
 
@@ -265,10 +268,16 @@ class FindSharpAngles:
             #print(len(feature))
             self.run_component(feature)
         #As of here the Dataframes are both built
-        self.angle_stats()
+        self.angle_stats(user_path)
         self.write_pts(user_path)
-        #self.edge_stats()
+        self.edge_stats(user_path)
+        self.write_lines(user_path)
 
+    def round_sigfigs(self, num, sig_figs):
+        if num != 0:
+            return round(num, -int(math.floor(math.log10(abs(num))) - (sig_figs - 1)))
+        else:
+            return 0  # Can't take the log of 0
 #Generates the DataFrames
     def run_component(self, feature):
         pt_list = []
@@ -282,6 +291,10 @@ class FindSharpAngles:
                 angle = round(angle, 1)
                 if angle == 0:
                     self.count_0 += 1
+                elif angle <= 10:
+                	self.count_10 += 1
+                elif angle <= 45:
+                	self.count_45 += 1
                 elif angle < 90.1 and angle > 89.9:
                     self.count_90 += 1
                 elif angle >= 179.9:
@@ -294,16 +307,23 @@ class FindSharpAngles:
             self.Angles = self.Angles.append(entry, ignore_index = True).dropna()
         
         #Create a DataFrame of Edges and Lengths
-        #for i in range(len(pt_list)-2):
-        #    length = self.calculate_length(pt_list[i], pt_list[i+1])
-        #    entry = pd.Series({"Edge":[pt_list[i],pt_list[i+1]], "Length": length})
-        #    self.Edges = self.Edges.append(entry, ignore_index = True)
-        #self.Edges = self.Edges.dropna()
+        if len(pt_list) > 4:
+            for i in range(len(pt_list)-1):
+                length = self.calculate_length(pt_list[i], pt_list[i+1])
+                length = self.round_sigfigs(length, 4)
+                entry = pd.Series({"Edge":[pt_list[i],pt_list[i+1]], "Length": length})
+                self.Edges = self.Edges.append(entry, ignore_index = True)
+            self.Edges = self.Edges.dropna()
+        print(self.Edges)
+
 
 #Output the pts to their own shapefile
     def write_pts(self, user_path):
         #Set your own point layer path here
-        writer = QgsVectorFileWriter(user_path, "CP1250", self.fields, QGis.WKBPoint, None, "ESRI Shapefile")
+        user_path = user_path[0:-4]+'_angle.shp'
+        fields = QgsFields()
+        fields.append(QgsField("Angle", QVariant.Double))
+        writer = QgsVectorFileWriter(user_path, "CP1250", fields, QGis.WKBPoint, None, "ESRI Shapefile")
         for index, row in self.Angles.iterrows():
             i = row['Point']
             fet = QgsFeature()
@@ -312,7 +332,7 @@ class FindSharpAngles:
             fet.setAttributes([row['Angle']])
             writer.addFeature(fet)
         del(writer)
-        layer = self.load_shape(user_path)
+        layer = self.load_shape(user_path, 'pts')
         palyr = QgsPalLayerSettings()
         palyr.readFromLayer(layer)
         palyr.enabled = True
@@ -321,16 +341,40 @@ class FindSharpAngles:
         palyr.setDataDefinedProperty(QgsPalLayerSettings.Size,True,True,'20','')
         palyr.writeToLayer(layer)
 
-    def angle_stats(self):
+    def write_lines(self, user_path):
+        #Set your own point layer path here
+        user_path = user_path[0:-4]+'_edge.shp'
+        fields = QgsFields()
+        fields.append(QgsField("Length", QVariant.Double))
+        writer = QgsVectorFileWriter(user_path, "CP1250", fields, QGis.WKBLineString, None, "ESRI Shapefile")
+        for index, row in self.Edges.iterrows():
+            i = row['Edge']
+            fet = QgsFeature()
+            E = [QgsPoint(i[0].x, i[0].y), QgsPoint(i[1].x, i[1].y)]
+            fet.setGeometry(QgsGeometry.fromPolyline(E))
+            fet.setAttributes([row['Length']])
+            writer.addFeature(fet)
+        del(writer)
+        layer = self.load_shape(user_path, 'edges')
+        palyr = QgsPalLayerSettings()
+        palyr.readFromLayer(layer)
+        palyr.enabled = True
+        palyr.fieldName = 'Length'
+        palyr.placement= QgsPalLayerSettings.OnLine
+        palyr.setDataDefinedProperty(QgsPalLayerSettings.Size,True,True,'20','')
+        palyr.writeToLayer(layer)
+
+    def angle_stats(self, user_path):
         mean = np.mean(self.Angles['Angle'])
         std = np.std(self.Angles['Angle'])
+        user_path = user_path[0:-4]+'_anglestats'
         sharpest_10 = np.percentile(self.Angles['Angle'], 10)
         sharpest_25 = np.percentile(self.Angles['Angle'], 25)
         sharpest_50 = np.percentile(self.Angles['Angle'], 50)
-        desc_stats = open('/Users/clowrie/Desktop/Descriptive Stats/Descriptive Statistics on {}'.format(self.layer.name()), 'w')
+        desc_stats = open(user_path, 'w')
         desc_stats.write('-- Angle Stats --\n')
         desc_stats.write("Average Angle: {}\n10th percentile (Sharpest 10 percent): {}\n25th percentile: {}\nMedian: {}\n\n".format(str(mean),str(sharpest_10),str(sharpest_25),str(sharpest_50)))
-        desc_stats.write("Number of 180 degree angles: {}\nNumber of 90 degree angles: {}\nNumber of 0 degree angles: {}".format(self.count_180, self.count_90, self.count_0))
+        desc_stats.write("Number of 180 degree angles: {}\nNumber of 90 degree angles: {}\nNumber of angles less than 45 degrees: {}\nNumber of angles less than 10 degrees: {}\nNumber of 0 degree angles: {}".format(self.count_180, self.count_90, self.count_45, self.count_10, self.count_0))
         self.show_dialog("Mean : {}\n10th percentile: {}\n25th percentile: {}\nMedian: {}".format(str(mean),str(sharpest_10),str(sharpest_25),str(sharpest_50)), "X")
         matplotlib.style.use('ggplot')
         plt.figure()
@@ -339,22 +383,25 @@ class FindSharpAngles:
         plt.title('Histogram of Angles within {}'.format(self.layer.name()))
         plot_angles = self.Angles['Angle'].plot.hist(bins = 180)
         plt.show()
-        #print(self.Angles)
     
-    def edge_stats(self):
+    def edge_stats(self, user_path):
         mean = np.mean(self.Edges['Length'])
         std = np.std(self.Edges['Length'])
         longest_10 = np.percentile(self.Edges['Length'], 90)
         longest_25 = np.percentile(self.Edges['Length'], 75)
         longest_50 = np.percentile(self.Edges['Length'], 50)
-
-        self.show_dialog("Mean : {}\n90th percentile: {}\n75th percentile: {}\nMedian: {}".format(str(mean),str(longest_10),str(longest_25),str(longest_50)), "X")
+        user_path = user_path[0:-4]+'_edgestats'
+        desc_stats = open(user_path, 'w')
+        desc_stats.write('-- Angle Stats --\n')
+        desc_stats.write("Average Edge Length: {}\n90th percentile (Longest 10 percent): {}\n75th percentile: {}\nMedian: {}\n\n".format(str(mean),str(longest_10),str(longest_25),str(longest_50)))
+        self.show_dialog("Mean : {}\n90th percentile: {}\n25th percentile: {}\nMedian: {}".format(str(mean),str(longest_10),str(longest_25),str(longest_50)), "X")
         matplotlib.style.use('ggplot')
         plt.figure()
+        plt.ylabel('Frequency')
+        plt.xlabel('Edge Length')
         plt.title('Histogram of Edge Lengths within {}'.format(self.layer.name()))
-        plot_angles = self.Edges['Length'].plot.hist(bins = 180)
+        plot_angles = self.Edges['Length'].plot.hist(bins = 1000)
         plt.show()
-        print(self.Edges)
     
     def run(self):
         """Run method that performs all the real work"""
@@ -376,7 +423,7 @@ class FindSharpAngles:
         #file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
         #self.user_angle = #GET USER ANGLE FOR MAXIMUM ANGLE
         # See if OK was pressed
-        if result:
+        if result and self.fileName[-4:] == '.shp':
 
             self.user_angle = self.dlg.angle_dial.value()
             self.show_dialog("Outputing points at: {} \n\nPoints less than: {} degrees".format(self.fileName, self.user_angle), "Information")

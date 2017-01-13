@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>896</width>
-    <height>450</height>
+    <width>905</width>
+    <height>520</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,8 +16,8 @@
   <widget class="QDialogButtonBox" name="button_box">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>410</y>
+     <x>150</x>
+     <y>460</y>
      <width>191</width>
      <height>32</height>
     </rect>
@@ -32,8 +32,8 @@
   <widget class="QPushButton" name="path_btn">
    <property name="geometry">
     <rect>
-     <x>0</x>
-     <y>130</y>
+     <x>40</x>
+     <y>180</y>
      <width>121</width>
      <height>32</height>
     </rect>
@@ -45,8 +45,8 @@
   <widget class="QLabel" name="path_lbl">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>160</y>
+     <x>50</x>
+     <y>210</y>
      <width>291</width>
      <height>20</height>
     </rect>
@@ -61,8 +61,8 @@
   <widget class="QDial" name="angle_dial">
    <property name="geometry">
     <rect>
-     <x>110</x>
-     <y>260</y>
+     <x>80</x>
+     <y>310</y>
      <width>91</width>
      <height>91</height>
     </rect>
@@ -77,18 +77,18 @@
   <widget class="QLineEdit" name="angle_box">
    <property name="geometry">
     <rect>
-     <x>100</x>
-     <y>380</y>
+     <x>70</x>
+     <y>430</y>
      <width>113</width>
      <height>21</height>
     </rect>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="scroll_min">
    <property name="geometry">
     <rect>
-     <x>120</x>
-     <y>350</y>
+     <x>90</x>
+     <y>400</y>
      <width>21</width>
      <height>16</height>
     </rect>
@@ -97,11 +97,11 @@
     <string>0</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_2">
+  <widget class="QLabel" name="scroll_max">
    <property name="geometry">
     <rect>
-     <x>180</x>
-     <y>350</y>
+     <x>150</x>
+     <y>400</y>
      <width>21</width>
      <height>16</height>
     </rect>
@@ -110,11 +110,11 @@
     <string>180</string>
    </property>
   </widget>
-  <widget class="QLabel" name="label_3">
+  <widget class="QLabel" name="scroll_mid">
    <property name="geometry">
     <rect>
-     <x>150</x>
-     <y>240</y>
+     <x>120</x>
+     <y>290</y>
      <width>21</width>
      <height>16</height>
     </rect>
@@ -126,8 +126,8 @@
   <widget class="Line" name="line">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>180</y>
+     <x>50</x>
+     <y>230</y>
      <width>291</width>
      <height>20</height>
     </rect>
@@ -136,37 +136,28 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QLabel" name="label_4">
+  <widget class="QLabel" name="scroll_title">
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>200</y>
-     <width>571</width>
-     <height>16</height>
+     <y>240</y>
+     <width>411</width>
+     <height>51</height>
     </rect>
    </property>
    <property name="text">
-    <string>For angles sharper than... (degrees)</string>
+    <string>For angles sharper than... (degrees)   
+**Currently deprecated, but works as an input for layers of interest</string>
    </property>
-  </widget>
-  <widget class="QLabel" name="label_5">
-   <property name="geometry">
-    <rect>
-     <x>40</x>
-     <y>10</y>
-     <width>241</width>
-     <height>16</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Find sharp angles of selected features</string>
+   <property name="wordWrap">
+    <bool>true</bool>
    </property>
   </widget>
   <widget class="QComboBox" name="selectLayer">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>80</y>
+     <x>50</x>
+     <y>130</y>
      <width>291</width>
      <height>26</height>
     </rect>
@@ -175,8 +166,8 @@
   <widget class="Line" name="line_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>110</y>
+     <x>50</x>
+     <y>160</y>
      <width>291</width>
      <height>20</height>
     </rect>
@@ -185,11 +176,11 @@
     <enum>Qt::Horizontal</enum>
    </property>
   </widget>
-  <widget class="QLabel" name="label_6">
+  <widget class="QLabel" name="layer_select_title">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>60</y>
+     <x>50</x>
+     <y>110</y>
      <width>91</width>
      <height>16</height>
     </rect>
@@ -201,24 +192,100 @@
   <widget class="QLineEdit" name="lineEdit">
    <property name="geometry">
     <rect>
-     <x>410</x>
-     <y>280</y>
-     <width>113</width>
+     <x>250</x>
+     <y>360</y>
+     <width>131</width>
      <height>21</height>
     </rect>
    </property>
   </widget>
-  <widget class="QLabel" name="label_7">
+  <widget class="QLabel" name="percentile_title">
    <property name="geometry">
     <rect>
-     <x>430</x>
-     <y>250</y>
-     <width>60</width>
+     <x>240</x>
+     <y>330</y>
+     <width>161</width>
      <height>16</height>
     </rect>
    </property>
    <property name="text">
-    <string>Percentile</string>
+    <string>Percentile   **Deprecated</string>
+   </property>
+  </widget>
+  <widget class="QLabel" name="desc">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>150</y>
+     <width>421</width>
+     <height>261</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="text">
+    <string>This plugin analyzes an input line layer.  
+
+Outputs: 
+1) a point layer of each angle 
+2) a line layer of each edge 
+3) two documents, with descriptive stats for angles and edges 
+4) two histograms, angles and edge length
+
+This is useful for statistical analysis of geometry indicators, namely that sharp angles and long edges are not true to the coastline.  It creates Pandas DataFrames of the points and angles, and the statistical analysis can change to our specifications. 
+
+It can be made more efficient.  Currently it takes ~one minute for every 15,000 nodes</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+   </property>
+   <property name="wordWrap">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="desc_title">
+   <property name="geometry">
+    <rect>
+     <x>460</x>
+     <y>105</y>
+     <width>421</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="lineWidth">
+    <number>1</number>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:18pt;&quot;&gt;Description&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="textFormat">
+    <enum>Qt::RichText</enum>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QLabel" name="title">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>891</width>
+     <height>51</height>
+    </rect>
+   </property>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
+   </property>
+   <property name="text">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:24pt;&quot;&gt;Geometry Analysis&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
   </widget>
  </widget>
