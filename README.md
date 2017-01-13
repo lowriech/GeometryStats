@@ -1,8 +1,14 @@
 # GeometryStats
-This QGIS plugin takes an input line layer, and outputs descriptive statistics on the quality of its geometry.  This includes
-1) a point shapefile of all the angles in the layer of interest
-2) a histogram showing the distribution of angles in the layer of interest
-3) a document showing the average angle, various percentiles, and counting the 0, 90, and 180 degree angles
+This QGIS plugin takes an input line layer, and outputs descriptive statistics on the quality of its geometry.  This includes:
+
+Two Shapefiles
+1) a point shapefile of all the angles, and a line shapefile of all the edges
+
+Two histograms:
+2) showing the distribution of angles and edge lengths
+
+Two stats documents:
+3) showing percentile values, averages, and other descriptive statistics
 
 
 Inputs should be converted first to a line layer if they are polygon.  Additionally, if you want the edge output to have meaningful units then the data should be reprojected to a meter CRS.  This won't really affect the shape of the histogram, but will make comparisons between data sets less meaningful.  
