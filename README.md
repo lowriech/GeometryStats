@@ -1,7 +1,7 @@
 # GeometryStats
 This QGIS plugin takes an input line layer, and outputs descriptive statistics on the quality of its geometry.  This includes:
 
-Two Shapefiles:
+Two shapefiles:
 a point shapefile of all the angles, and a line shapefile of all the edges
 
 Two histograms:
