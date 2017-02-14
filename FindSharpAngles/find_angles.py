@@ -419,10 +419,6 @@ class FindSharpAngles:
         self.dlg.show()
         # Run the dialog event loop
         result = self.dlg.exec_()
-        #user_path = #GET USER PATH FOR OUTPUT PT SHAPEFILE
-        #file = str(QFileDialog.getExistingDirectory(self, "Select Directory"))
-        #self.user_angle = #GET USER ANGLE FOR MAXIMUM ANGLE
-        # See if OK was pressed
         if result and self.fileName[-4:] == '.shp':
 
             self.user_angle = self.dlg.angle_dial.value()
